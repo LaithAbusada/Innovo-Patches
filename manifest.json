@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Fix WiFi Settings",
+    "version": "1.0",
+    "summary": "Patches WiFi config for stable connection",
+    "path": "scripts/fix_wifi.sh"
+  },
+  {
+    "name": "Update Boot Animation",
+    "version": "1.2",
+    "summary": "Replaces boot animation",
+    "path": "scripts/boot_anim.sh"
+  }
+]
