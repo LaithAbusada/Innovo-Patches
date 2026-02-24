@@ -1,14 +1,20 @@
 [
   {
-    "name": "Fix WiFi Settings",
+    "name": "Create Test File",
     "version": "1.0",
-    "summary": "Patches WiFi config for stable connection",
-    "path": "scripts/fix_wifi.sh"
+    "summary": "Creates a file at /sdcard/patch_test.txt with a timestamp",
+    "path": "scripts/create_test_file.sh"
   },
   {
-    "name": "Update Boot Animation",
-    "version": "1.2",
-    "summary": "Replaces boot animation",
-    "path": "scripts/boot_anim.sh"
+    "name": "Set Test Property",
+    "version": "1.0",
+    "summary": "Sets a system property you can read back with getprop",
+    "path": "scripts/set_test_prop.sh"
+  },
+  {
+    "name": "Write Log Entry",
+    "version": "1.0",
+    "summary": "Writes a tagged entry to logcat you can filter for",
+    "path": "scripts/write_log.sh"
   }
 ]
