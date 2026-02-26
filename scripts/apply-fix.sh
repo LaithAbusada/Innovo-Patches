@@ -45,18 +45,16 @@ fi
 # ── Ensure /system is writable ───────────────────────────────────────────────
 if ! touch /system/_test_rw 2>/dev/null; then
     echo "[INFO] /system is read-only. Attempting remount..."
-    if [ -x /system/bin/remount ]; then
+    # Try multiple remount methods
+    mount -o rw,remount /system 2>/dev/null
+    sleep 1
+    if ! touch /system/_test_rw 2>/dev/null; then
         /system/bin/remount 2>/dev/null
         sleep 1
         if ! touch /system/_test_rw 2>/dev/null; then
             echo "[ERROR] Remount failed. Reboot and try again."
-            echo "        (First remount after factory reset requires a reboot.)"
             exit 1
         fi
-    else
-        echo "[ERROR] /system is read-only and no remount binary found."
-        echo "        Run 'adb remount' from host first."
-        exit 1
     fi
 fi
 rm -f /system/_test_rw
