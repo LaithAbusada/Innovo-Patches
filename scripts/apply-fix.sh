@@ -3,7 +3,7 @@
 # apply-fix.sh — Runs ON the panel via: adb shell sh /data/local/tmp/apply-fix.sh
 #
 # Installs stub com.android.vending and applies AOT compilation for com.homelogic.
-# Must be run as root (adb root first) with /system writable (adb remount first).
+# Must be run as root (adb root first). Will attempt to remount /system automatically.
 #
 
 set -e
@@ -43,21 +43,58 @@ if pm list packages 2>/dev/null | grep -q "com.android.vending"; then
 fi
 
 # ── Ensure /system is writable ───────────────────────────────────────────────
-if ! touch /system/_test_rw 2>/dev/null; then
-    echo "[INFO] /system is read-only. Attempting remount..."
-    # Try multiple remount methods
+remount_system() {
+    # Method 1: direct mount remount
+    echo "[INFO] Trying: mount -o rw,remount /system ..."
     mount -o rw,remount /system 2>/dev/null
-    sleep 1
-    if ! touch /system/_test_rw 2>/dev/null; then
+    if touch /system/_test_rw 2>/dev/null; then rm -f /system/_test_rw; return 0; fi
+
+    # Method 2: remount root (some devices mount /system as /)
+    echo "[INFO] Trying: mount -o rw,remount / ..."
+    mount -o rw,remount / 2>/dev/null
+    if touch /system/_test_rw 2>/dev/null; then rm -f /system/_test_rw; return 0; fi
+
+    # Method 3: find the actual block device and remount it
+    echo "[INFO] Trying: remount via block device ..."
+    SYS_DEV=$(mount | grep " /system " | head -1 | awk '{print $1}')
+    if [ -n "$SYS_DEV" ]; then
+        mount -o rw,remount "$SYS_DEV" /system 2>/dev/null
+        if touch /system/_test_rw 2>/dev/null; then rm -f /system/_test_rw; return 0; fi
+    fi
+
+    # Method 4: /system/bin/remount binary (some userdebug builds)
+    if [ -x /system/bin/remount ]; then
+        echo "[INFO] Trying: /system/bin/remount ..."
         /system/bin/remount 2>/dev/null
         sleep 1
-        if ! touch /system/_test_rw 2>/dev/null; then
-            echo "[ERROR] Remount failed. Reboot and try again."
-            exit 1
-        fi
+        if touch /system/_test_rw 2>/dev/null; then rm -f /system/_test_rw; return 0; fi
     fi
+
+    # Method 5: disable dm-verity and request reboot
+    echo "[INFO] Trying: disable dm-verity ..."
+    if command -v avbctl >/dev/null 2>&1; then
+        avbctl disable-verification 2>/dev/null
+        echo "[WARN] dm-verity disabled. A REBOOT is required."
+        echo "       After reboot, run this script again."
+        echo "       Rebooting in 5 seconds..."
+        sleep 5
+        reboot
+        exit 0
+    fi
+
+    return 1
+}
+
+if ! touch /system/_test_rw 2>/dev/null; then
+    echo "[INFO] /system is read-only. Attempting remount..."
+    if ! remount_system; then
+        echo "[ERROR] All remount methods failed."
+        echo "        Try from host: adb disable-verity && adb reboot"
+        exit 1
+    fi
+else
+    rm -f /system/_test_rw
 fi
-rm -f /system/_test_rw
 
 # ── Decode and install stub APK ──────────────────────────────────────────────
 echo "[INFO] Decoding stub APK..."
