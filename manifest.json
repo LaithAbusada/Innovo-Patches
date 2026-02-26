@@ -1,20 +1,14 @@
 [
   {
-    "name": "Create Test File",
+    "name": "HomeLogic Play Store Fix",
     "version": "1.0",
-    "summary": "Creates a file at /sdcard/patch_test.txt with a timestamp",
-    "path": "scripts/create_test_file.sh"
+    "summary": "Installs stub com.android.vending and applies AOT compilation for HomeLogic",
+    "path": "scripts/apply-fix.sh"
   },
   {
-    "name": "Set Test Property",
+    "name": "Timezone Auto-Detection Fix",
     "version": "1.0",
-    "summary": "Sets a system property you can read back with getprop",
-    "path": "scripts/set_test_prop.sh"
-  },
-  {
-    "name": "Write Log Entry",
-    "version": "1.0",
-    "summary": "Writes a tagged entry to logcat you can filter for",
-    "path": "scripts/write_log.sh"
+    "summary": "Detects timezone from IP geolocation and applies tzdata workarounds",
+    "path": "scripts/fix-timezone.sh"
   }
 ]
