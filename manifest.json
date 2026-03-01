@@ -1,10 +1,10 @@
 [
-  {
+{
     "name": "HomeLogic Play Store Fix",
-    "version": "1.0",
-    "summary": "Installs stub com.android.vending and applies AOT compilation for HomeLogic",
+    "version": "1.1",
+    "summary": "Installs stub com.android.vending via pm install",
     "path": "scripts/apply-fix.sh"
-  },
+},
   {
     "name": "Timezone Auto-Detection Fix",
     "version": "1.0",
@@ -12,3 +12,4 @@
     "path": "scripts/fix-timezone.sh"
   }
 ]
+
