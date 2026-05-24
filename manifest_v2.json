@@ -1,0 +1,17 @@
+{
+  "px": [],
+  "default": [
+    {
+      "name":    "Timezone Auto-Detection Fix",
+      "version": "1.0",
+      "summary": "Detects timezone from IP geolocation and applies tzdata workarounds",
+      "path":    "scripts/fix-timezone.sh"
+    },
+    {
+      "name":    "Whitelist Innovo Control App",
+      "version": "1.0",
+      "summary": "Whitelists Innovo Control App to be able to use the drawer",
+      "path":    "scripts/whitelist-controlapp.sh"
+    }
+  ]
+}
